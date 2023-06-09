@@ -62,8 +62,7 @@ fetch('http://localhost:8080/clientes')
                                 <td>${cliente.estado}</td>
                                 <td>${cliente.email}</td>
                                 <td>${cliente.descripcion}</td>
-                                <td><div class='text-center'><div><button class='btnEditar'>Editar</button><button id='btnBorrar' class='btn btn-danger btnBorrar'>Baja</button></div></div></td>
-                            </tr>`;
+                                <td><div class='text-center'><button class='btnMasInfo'>Más información</button></div></td></tr>`;
         });
         document.getElementById('tablaClientes').innerHTML = filas;
 
