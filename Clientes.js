@@ -13,69 +13,58 @@ $("#btnNuevo").click(function () {
 
 var idcliente;
 //botón EDITAR    
-$(document).on("click", ".btnEditar", function () {
-    fila = $(this).closest("tr");
-    id = parseInt(fila.find('td:eq(0)').text());
-    dni = fila.find('td:eq(1)').text();
-    apellido = fila.find('td:eq(2)').text();
-    nombre = fila.find('td:eq(3)').text();
-    domicilio = fila.find('td:eq(4)').text();
-    telefono = fila.find('td:eq(5)').text();
-    zona = fila.find('td:eq(6)').text();
-    estado = fila.find('td:eq(7)').text();
-    email = fila.find('td:eq(8)').text();
-    observaciones = fila.find('td:eq(9)').text();
+$(document).on("click", ".btnInfo", function () {
+    var fila = $(this).closest("tr");
+    var idCliente = fila.find('td:eq(0)').text(); // Obtener el ID del cliente
 
-    $("#dni").val(dni);
-    $("#apellido").val(apellido);
-    $("#nombre").val(nombre);
-    $("#domicilio").val(domicilio);
-    $("#telefono").val(telefono);
-    $("#zona").val(zona);
-    $("#estado").val(estado);
-    $("#e-mail").val(email);
-    $("#observaciones").val(observaciones);
-    idcliente = id;
+    fetch("http://127.0.0.1:5000/clientesTotal")
+        .then(response => response.json())
+        .then(data => {
+            var cliente = data.find(c => c.idcliente === parseInt(idCliente)); // Buscar el cliente por su ID
 
-    $(".modal-header").css("background-color", "#007bff");
-    $(".modal-header").css("color", "white");
-    $(".modal-title").text("Editar Cliente");
-    $("#btnSubmit").text("Editar");
-    $("#formClientes").attr("data-action", "editar");
-    $("#modalCRUD").modal("show");
+            // Actualizar los elementos del modal con los datos del cliente
+            $("#dni").text(cliente.dni);
+            $("#nombre").text(cliente.nombre);
+            $("#apellido").text(cliente.apellido);
+            $("#direccion").text(cliente.direccion);
+            $("#telefono").text(cliente.telefono);
+            $("#estado").text(cliente.estado);
+            $("#observaciones").text(cliente.observaciones);
+            $("#fechaAlta").text(cliente.fechaAlta);
+            $("#servicio").text(cliente.servicio);
+            $("#zona").text(cliente.zona);
+            
+            $("#modal-info").modal("show");
+        })
+        .catch(error => console.error(error));
 });
 
-fetch('http://localhost:8080/clientes')
+fetch('http://127.0.0.1:5000/clientes')
     .then(response => response.json())
     .then(data => {
         // Crear filas con los datos obtenidos y añadirlos a la tabla
         let filas = '';
         data.forEach(cliente => {
             filas += `<tr>
-                                <td>${cliente.id}</td>
-                                <td>${cliente.dni}</td>
-                                <td>${cliente.apellido}</td>
-                                <td>${cliente.nombre}</td>
-                                <td>${cliente.domicilio}</td>
-                                <td>${cliente.telefono}</td>
-                                <td>${cliente.zona}</td>
-                                <td>${cliente.estado}</td>
-                                <td>${cliente.email}</td>
-                                <td>${cliente.descripcion}</td>
-                                <td><div class='text-center'><button class='btnMasInfo'>Más información</button></div></td></tr>`;
+                <td>${cliente.idcliente}</td>
+                <td>${cliente.dni}</td>
+                <td>${cliente.apellido}</td>
+                <td>${cliente.nombre}</td>
+                <td><div class='text-center'><button class='btnMasInfo'>Info</button></div></td>
+                </tr>`;
         });
         document.getElementById('tablaClientes').innerHTML = filas;
 
         $(document).ready(function () {
             tablaClientes = $('#Clientes').DataTable({
                 scrollX: true,
-                //botones editar y eliminar en la tabla
+                // botones editar y eliminar en la tabla
                 "columnDefs": [{
-                    "targets": 10,
+                    "targets": 4,
                     "data": null,
-                    "defaultContent": "<div class='text-center'><div class='btn-group'><button class='btn btn-primary btnEditar'>Editar</button><button id='btnBorrar' class='btn btn-danger btnBorrar'>Baja</button></div></div>"
+                    "defaultContent": "<div class='text-center'><div class='btn-group'><button class='btn btn-primary btnInfo'><i class='fa-solid fa-eye'></i></button>"
                 }],
-                //lenguaje
+                // lenguaje
                 "language": {
                     "lengthMenu": "Mostrar _MENU_ registros",
                     "zeroRecords": "No se encontraron resultados",
@@ -91,13 +80,10 @@ fetch('http://localhost:8080/clientes')
                     },
                     "sProcessing": "Procesando...",
                 }
-
             });
         });
     })
     .catch(error => console.error(error));
-
-
 
 
 // Obtener el formulario
@@ -164,23 +150,23 @@ form.addEventListener('submit', (event) => {
             },
             body: JSON.stringify(cliente)
         })
-        .then(response => {
-            if (response.ok) {
-                console.log('Cliente guardado exitosamente');
-                //alert("Cliente guardado correctamente");
-                swal('Cliente editado exitosamente', '', 'success').then(() => {
-                    setTimeout(() => {
-                        location.reload();
-                    }, 2000); // recarga la página después de 2 segundos
-                });
-                $("#modalCRUD").modal("hide");
-                //location.reload();
-                // Hacer algo después de que el cliente se haya guardado correctamente
-            } else {
-                console.error('Error al guardar el cliente');
-                // Hacer algo en caso de que ocurra un error al guardar el cliente
-            }
-        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Cliente guardado exitosamente');
+                    //alert("Cliente guardado correctamente");
+                    swal('Cliente editado exitosamente', '', 'success').then(() => {
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000); // recarga la página después de 2 segundos
+                    });
+                    $("#modalCRUD").modal("hide");
+                    //location.reload();
+                    // Hacer algo después de que el cliente se haya guardado correctamente
+                } else {
+                    console.error('Error al guardar el cliente');
+                    // Hacer algo en caso de que ocurra un error al guardar el cliente
+                }
+            })
     }
 });
 
@@ -198,18 +184,52 @@ $(document).on("click", ".btnBorrar", function () {
         },
         body: JSON.stringify({ estado: 'B' })
     })
-    .then(response => {
-        if (response.ok) {
-            console.log('Estado del cliente actualizado exitosamente');
-            // Realizar alguna acción adicional después de la actualización exitosa del estado
-            location.reload();
-        } else {
-            console.error('Error al actualizar el estado del cliente');
-            // Realizar alguna acción en caso de que ocurra un error al actualizar el estado
-        }
-    })
-    .catch(error => {
-        console.error('Error al actualizar el estado del cliente', error);
-        // Realizar alguna acción en caso de que ocurra un error al enviar la solicitud
-    });
+        .then(response => {
+            if (response.ok) {
+                console.log('Estado del cliente actualizado exitosamente');
+                // Realizar alguna acción adicional después de la actualización exitosa del estado
+                location.reload();
+            } else {
+                console.error('Error al actualizar el estado del cliente');
+                // Realizar alguna acción en caso de que ocurra un error al actualizar el estado
+            }
+        })
+        .catch(error => {
+            console.error('Error al actualizar el estado del cliente', error);
+            // Realizar alguna acción en caso de que ocurra un error al enviar la solicitud
+        });
+});
+
+var idcliente;
+//botón EDITAR    
+$(document).on("click", ".btnEditar", function () {
+    fila = $(this).closest("tr");
+    id = parseInt(fila.find('td:eq(0)').text());
+    dni = fila.find('td:eq(1)').text();
+    apellido = fila.find('td:eq(2)').text();
+    nombre = fila.find('td:eq(3)').text();
+    domicilio = fila.find('td:eq(4)').text();
+    telefono = fila.find('td:eq(5)').text();
+    zona = fila.find('td:eq(6)').text();
+    estado = fila.find('td:eq(7)').text();
+    email = fila.find('td:eq(8)').text();
+    observaciones = fila.find('td:eq(9)').text();
+
+    $("#dni").val(dni);
+    $("#apellido").val(apellido);
+    $("#nombre").val(nombre);
+    $("#domicilio").val(domicilio);
+    $("#telefono").val(telefono);
+    $("#zona").val(zona);
+    $("#estado").val(estado);
+    $("#e-mail").val(email);
+    $("#observaciones").val(observaciones);
+    idcliente = id;
+
+    $(".modal-header").css("background-color", "#007bff");
+    $(".modal-header").css("color", "white");
+    $(".modal-title").text("Editar Cliente");
+    $("#btnSubmit").text("Editar");
+    $("#formClientes").attr("data-action", "editar");
+    $("#modalCRUD").modal("show");
 });

@@ -69,12 +69,6 @@
                                                 <th>DNI</th>
                                                 <th>Apellido</th>
                                                 <th>Nombre</th>
-                                                <th>Domicilio</th>
-                                                <th>Telefono</th>
-                                                <th>Zona</th>
-                                                <th>Estado</th>
-                                                <th>E-mail</th>
-                                                <th>Descripcion</th>
                                                 <th>Acciones</th>
                                             </tr>
                                         </thead>
@@ -90,22 +84,43 @@
             </div>
 
             <!--Modal con informacion-->
-            <div class="modal fade" id="modal-info" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog" role="document">
+            <div class="modal fade" id="modal-info" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Informacion del Cliente</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Información del Cliente</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>DNI:</strong> <span id="dni"></span></p>
+                                    <p><strong>Nombre:</strong> <span id="nombre"></span></p>
+                                    <p><strong>Apellido:</strong> <span id="apellido"></span></p>
+                                    <p><strong>Dirección:</strong> <span id="direccion"></span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Teléfono:</strong> <span id="telefono"></span></p>
+                                    <p><strong>Estado:</strong> <span id="estado"></span></p>
+                                    <p><strong>Observaciones:</strong> <span id="observaciones"></span></p>
+                                    <p><strong>Fecha de Alta:</strong> <span id="fechaAlta"></span></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Tipo de servicio:</strong> <span id="servicio"></span></p>
+                                    <p><strong>Zona:</strong> <span id="zona"></span></p>
+                                </div>
+                            </div>
+                            <button type="submit" id="btnSubmit" class="btn btn-success">Editar</button>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" id="btnSubmit" class="btn btn-success">Guardar</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                         </div>
-                        </form>
                     </div>
                 </div>
             </div>
-
+            
             <!--Modal para CRUD-->
 
             <div class="modal fade" id="modalCRUD" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -114,9 +129,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel"></h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                    aria-hidden="true">&times;</span>
-                            </button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <form id="formClientes">
                             <div class="modal-body">
