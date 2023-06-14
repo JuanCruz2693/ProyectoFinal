@@ -6,13 +6,58 @@ $("#btnNuevo").click(function () {
     $(".modal-header").css("color", "white");
     $(".modal-title").text("Nuevo Cliente");
     $("#btnSubmit").text("Guardar");
-    $("#formClientes").attr("data-action", "guardar");
     $("#modalCRUD").modal("show");
-    id = null;
+});
+
+const form = document.querySelector('#formClientes');
+let url = "http://127.0.0.1:5000/guardarCliente"; // La URL de la API donde se guardarán los datos
+
+// Escuchar el evento submit del formulario
+form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const idServicio = parseInt(document.querySelector('#servicio').value);
+    const zona = parseInt(document.querySelector('#zona').value);
+
+    // Crear el objeto JSON con los datos del formulario
+    const cliente = {
+        dni: document.querySelector('#dni').value,
+        apellido: document.querySelector('#apellido').value,
+        nombre: document.querySelector('#nombre').value,
+        direccion: document.querySelector('#domicilio').value,
+        telefono: document.querySelector('#telefono').value,
+        estado: "A",
+        observaciones: document.querySelector('#observaciones').value,
+        fechaAlta: document.querySelector('#fechaAlta').value,
+        idServicio: idServicio,
+        zona: zona
+    };
+    console.log(cliente)
+
+    // Enviar el JSON a la API
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(cliente)
+    })
+        .then(response => {
+            if (response.ok) {
+                // Hacer algo después de que los datos se hayan guardado correctamente
+                console.log('Datos guardados correctamente');
+            } else {
+                // Hacer algo en caso de que ocurra un error al guardar los datos
+                console.error('Error al guardar los datos');
+            }
+        })
+        .catch(error => {
+            // Hacer algo en caso de que ocurra un error al enviar la solicitud
+            console.error('Error al enviar la solicitud', error);
+        });
 });
 
 var idcliente;
-//botón EDITAR    
+//botón INFO  
 $(document).on("click", ".btnInfo", function () {
     var fila = $(this).closest("tr");
     var idCliente = fila.find('td:eq(0)').text(); // Obtener el ID del cliente
@@ -22,18 +67,20 @@ $(document).on("click", ".btnInfo", function () {
         .then(data => {
             var cliente = data.find(c => c.idcliente === parseInt(idCliente)); // Buscar el cliente por su ID
 
+            var fechaAlta = new Date(cliente.fechaAlta).toLocaleDateString("es-ES");
+
             // Actualizar los elementos del modal con los datos del cliente
-            $("#dni").text(cliente.dni);
-            $("#nombre").text(cliente.nombre);
-            $("#apellido").text(cliente.apellido);
-            $("#direccion").text(cliente.direccion);
-            $("#telefono").text(cliente.telefono);
-            $("#estado").text(cliente.estado);
-            $("#observaciones").text(cliente.observaciones);
-            $("#fechaAlta").text(cliente.fechaAlta);
-            $("#servicio").text(cliente.servicio);
-            $("#zona").text(cliente.zona);
-            
+            $("#dni-i").text(cliente.dni);
+            $("#nombre-i").text(cliente.nombre);
+            $("#apellido-i").text(cliente.apellido);
+            $("#direccion-i").text(cliente.direccion);
+            $("#telefono-i").text(cliente.telefono);
+            $("#estado-i").text(cliente.estado);
+            $("#observaciones-i").text(cliente.observaciones);
+            $("#fechaAlta-i").text(fechaAlta);
+            $("#servicio-i").text(cliente.servicio);
+            $("#zona-i").text(cliente.zona);
+
             $("#modal-info").modal("show");
         })
         .catch(error => console.error(error));
@@ -85,151 +132,63 @@ fetch('http://127.0.0.1:5000/clientes')
     })
     .catch(error => console.error(error));
 
-
-// Obtener el formulario
-const form = document.querySelector('#formClientes');
-let url = "";
-
-// Escuchar el evento submit del formulario
-form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    // Crear el objeto JSON
-    const cliente = {
-        apellido: document.querySelector('#apellido').value,
-        nombre: document.querySelector('#nombre').value,
-        dni: document.querySelector('#dni').value,
-        domicilio: document.querySelector('#domicilio').value,
-        telefono: document.querySelector('#telefono').value,
-        zona: document.querySelector('#zona').value,
-        estado: "A",
-        email: document.querySelector('#e-mail').value,
-        descripcion: document.querySelector('#observaciones').value
-    };
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    const action = $("#formClientes").attr("data-action");
-    // Mostrar el objeto JSON en la consola
-    console.log(cliente);
-    //enviar el JSON a la API
-    if (action === "guardar") {
-        // Lógica para la acción "Guardar"
-        url = "http://localhost:8080/savecliente";
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(cliente)
-        })
-            .then(response => {
-                if (response.ok) {
-                    swal('Cliente guardado exitosamente', '', 'success').then(() => {
-                        setTimeout(() => {
-                            location.reload();
-                        }, 2000); // recarga la página después de 2 segundos
-                    });
-                    $("#modalCRUD").modal("hide");
-                    // Hacer algo después de que el cliente se haya guardado correctamente
-                } else {
-                    console.error('Error al guardar el cliente');
-                    // Hacer algo en caso de que ocurra un error al guardar el cliente
-                }
-            })
-            .catch(error => {
-                console.error('Error al guardar el cliente', error);
-                // Hacer algo en caso de que ocurra un error al enviar la solicitud
-            });
-    } else if (action === "editar") {
-        // Lógica para la acción "Editar"
-        const idCliente = id; // Obtén el ID del cliente que se está editando
-        url = `http://localhost:8080/editarcliente/${idCliente}`;
-        fetch(url, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(cliente)
-        })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Cliente guardado exitosamente');
-                    //alert("Cliente guardado correctamente");
-                    swal('Cliente editado exitosamente', '', 'success').then(() => {
-                        setTimeout(() => {
-                            location.reload();
-                        }, 2000); // recarga la página después de 2 segundos
-                    });
-                    $("#modalCRUD").modal("hide");
-                    //location.reload();
-                    // Hacer algo después de que el cliente se haya guardado correctamente
-                } else {
-                    console.error('Error al guardar el cliente');
-                    // Hacer algo en caso de que ocurra un error al guardar el cliente
-                }
-            })
-    }
-});
-
-
-
-$(document).on("click", ".btnBorrar", function () {
-    var fila = $(this).closest("tr");
-    var idCliente = parseInt(fila.find('td:eq(0)').text());
-    // Realizar la solicitud de actualización del estado del cliente
-    var url = `http://localhost:8080/bajaCliente/${idCliente}`;
-    fetch(url, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ estado: 'B' })
-    })
-        .then(response => {
-            if (response.ok) {
-                console.log('Estado del cliente actualizado exitosamente');
-                // Realizar alguna acción adicional después de la actualización exitosa del estado
-                location.reload();
-            } else {
-                console.error('Error al actualizar el estado del cliente');
-                // Realizar alguna acción en caso de que ocurra un error al actualizar el estado
-            }
-        })
-        .catch(error => {
-            console.error('Error al actualizar el estado del cliente', error);
-            // Realizar alguna acción en caso de que ocurra un error al enviar la solicitud
-        });
-});
-
 var idcliente;
 //botón EDITAR    
-$(document).on("click", ".btnEditar", function () {
-    fila = $(this).closest("tr");
-    id = parseInt(fila.find('td:eq(0)').text());
-    dni = fila.find('td:eq(1)').text();
-    apellido = fila.find('td:eq(2)').text();
-    nombre = fila.find('td:eq(3)').text();
-    domicilio = fila.find('td:eq(4)').text();
-    telefono = fila.find('td:eq(5)').text();
-    zona = fila.find('td:eq(6)').text();
-    estado = fila.find('td:eq(7)').text();
-    email = fila.find('td:eq(8)').text();
-    observaciones = fila.find('td:eq(9)').text();
+$(document).on("click", "#btnEditar", function () {
+    // Obtener los valores del modal de información del cliente
+    var dni = $("#dni-i").text().trim();
+    var nombre = $("#nombre-i").text().trim();
+    var apellido = $("#apellido-i").text().trim();
+    var direccion = $("#direccion-i").text().trim();
+    var telefono = $("#telefono-i").text().trim();
+    var observaciones = $("#observaciones-i").text().trim();
+    var fechaAlta = $("#fechaAlta-i").text().trim();
+    var servicio = $("#servicio-i").text().trim();
+    var zona = $("#zona-i").text().trim();
 
+// Dividir la cadena de fecha en día, mes y año
+var partesFecha = fechaAlta.split("/");
+var dia = partesFecha[0];
+var mes = partesFecha[1];
+var anio = partesFecha[2];
+
+// Formatear la fecha en el formato "dd/mm/yyyy"
+var fechaFormateada = dia.padStart(2, "0") + "/" + mes.padStart(2, "0") + "/" + anio;
+
+// Asignar la fecha formateada al input
+$("#fechaAlta").val(fechaFormateada);
+
+
+    console.log("dni:", dni);
+    console.log("nombre:", nombre);
+    console.log("apellido:", apellido);
+    console.log("direccion:", direccion);
+    console.log("telefono:", telefono);
+    console.log("observaciones:", observaciones);
+    console.log("fechaAlta:", fechaFormateada);
+    console.log("servicio:", servicio);
+    console.log("zona:", zona);
+
+    // Llenar el modal de edición con los valores obtenidos
     $("#dni").val(dni);
-    $("#apellido").val(apellido);
     $("#nombre").val(nombre);
-    $("#domicilio").val(domicilio);
+    $("#apellido").val(apellido);
+    $("#domicilio").val(direccion);
     $("#telefono").val(telefono);
-    $("#zona").val(zona);
-    $("#estado").val(estado);
-    $("#e-mail").val(email);
     $("#observaciones").val(observaciones);
-    idcliente = id;
+    $("#fechaAlta").val(fechaFormateada);
+    $("#servicio").val(servicio);
+    $("#zona").val(zona);
 
-    $(".modal-header").css("background-color", "#007bff");
-    $(".modal-header").css("color", "white");
+    // Modificar el título del modal de edición
     $(".modal-title").text("Editar Cliente");
+
+    // Modificar el texto del botón de envío del formulario
     $("#btnSubmit").text("Editar");
+
+    // Establecer la acción del formulario como "editar"
     $("#formClientes").attr("data-action", "editar");
+
+    // Abrir el modal de edición
     $("#modalCRUD").modal("show");
 });

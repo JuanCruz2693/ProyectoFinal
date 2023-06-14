@@ -58,7 +58,27 @@ def clientes():
         empleados_dict.append(empleado_dict)
     return jsonify(empleados_dict)
 
+@app.route("/guardarCliente", methods=["POST"])
+def guardar():
+    data = request.get_json()
+    dni = data.get("dni")
+    apellido = data.get("apellido")
+    nombre = data.get("nombre")
+    direccion = data.get("direccion")
+    telefono = data.get("telefono")
+    estado = data.get("estado")
+    observaciones = data.get("observaciones")
+    fechaAlta = data.get("fechaAlta")
+    idServicio = data.get("idServicio")
+    idZona = data.get("zona")
+    sql = "INSERT INTO cliente (DNI, apellido, nombre, direccion, telefono, estado, observaciones, FechaAlta, idServicio, idZona) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+    values = (dni, apellido, nombre, direccion, telefono, estado, observaciones, fechaAlta, idServicio, idZona)
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute(sql, values)
+    conn.commit()
 
+    return "Cliente guardado exitosamente"
 
 
 

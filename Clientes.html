@@ -84,7 +84,8 @@
             </div>
 
             <!--Modal con informacion-->
-            <div class="modal fade" id="modal-info" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="modal-info" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog modal-dialog-scrollable" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -94,25 +95,25 @@
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <p><strong>DNI:</strong> <span id="dni"></span></p>
-                                    <p><strong>Nombre:</strong> <span id="nombre"></span></p>
-                                    <p><strong>Apellido:</strong> <span id="apellido"></span></p>
-                                    <p><strong>Dirección:</strong> <span id="direccion"></span></p>
+                                    <p><strong>DNI:</strong> <span id="dni-i"></span></p>
+                                    <p><strong>Nombre:</strong> <span id="nombre-i"></span></p>
+                                    <p><strong>Apellido:</strong> <span id="apellido-i"></span></p>
+                                    <p><strong>Dirección:</strong> <span id="direccion-i"></span></p>
                                 </div>
                                 <div class="col-md-6">
-                                    <p><strong>Teléfono:</strong> <span id="telefono"></span></p>
-                                    <p><strong>Estado:</strong> <span id="estado"></span></p>
-                                    <p><strong>Observaciones:</strong> <span id="observaciones"></span></p>
-                                    <p><strong>Fecha de Alta:</strong> <span id="fechaAlta"></span></p>
+                                    <p><strong>Teléfono:</strong> <span id="telefono-i"></span></p>
+                                    <p><strong>Estado:</strong> <span id="estado-i"></span></p>
+                                    <p><strong>Observaciones:</strong> <span id="observaciones-i"></span></p>
+                                    <p><strong>Fecha de Alta:</strong> <span id="fechaAlta-i"></span></p>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <p><strong>Tipo de servicio:</strong> <span id="servicio"></span></p>
-                                    <p><strong>Zona:</strong> <span id="zona"></span></p>
+                                    <p><strong>Tipo de servicio:</strong> <span id="servicio-i"></span></p>
+                                    <p><strong>Zona:</strong> <span id="zona-i"></span></p>
                                 </div>
                             </div>
-                            <button type="submit" id="btnSubmit" class="btn btn-success">Editar</button>
+                            <button type="" id="btnEditar" class="btn btn-success">Editar</button>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -120,7 +121,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!--Modal para CRUD-->
 
             <div class="modal fade" id="modalCRUD" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -154,20 +155,20 @@
                                     <input type="text" class="form-control" id="telefono">
                                 </div>
                                 <div class="form-group">
-                                    <label for="zona" class="col-form-label">Zona:</label>
-                                    <input type="text" class="form-control" id="zona">
-                                </div>
-                                <!--<div class="form-group">
-                        <label for="estado" class="col-form-label">Estado</label>
-                        <input type="text" class="form-control" id="estado">
-                    </div>-->
-                                <div class="form-group">
-                                    <label for="e-mail" class="col-form-label">E-mail:</label>
-                                    <input type="text" class="form-control" id="e-mail">
-                                </div>
-                                <div class="form-group">
                                     <label for="observaciones" class="col-form-label">Observaciones:</label>
                                     <input type="text" class="form-control" id="observaciones">
+                                </div>
+                                <div class="form-group">
+                                    <label for="estado" class="col-form-label">Fecha de Alta:</label>
+                                    <input type="date" class="form-control" id="fechaAlta">
+                                </div>
+                                <div class="form-group">
+                                    <label for="estado" class="col-form-label">Servicio:</label>
+                                    <input type="text" class="form-control" id="servicio">
+                                </div>
+                                <div class="form-group">
+                                    <label for="zona" class="col-form-label">Zona:</label>
+                                    <input type="text" class="form-control" id="zona">
                                 </div>
                             </div>
                             <div class="modal-footer">
