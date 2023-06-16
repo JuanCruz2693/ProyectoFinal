@@ -68,11 +68,10 @@ def guardar():
     telefono = data.get("telefono")
     estado = data.get("estado")
     observaciones = data.get("observaciones")
-    fechaAlta = data.get("fechaAlta")
     idServicio = data.get("idServicio")
     idZona = data.get("zona")
-    sql = "INSERT INTO cliente (DNI, apellido, nombre, direccion, telefono, estado, observaciones, FechaAlta, idServicio, idZona) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
-    values = (dni, apellido, nombre, direccion, telefono, estado, observaciones, fechaAlta, idServicio, idZona)
+    sql = "INSERT INTO cliente (DNI, apellido, nombre, direccion, telefono, estado, observaciones, FechaAlta, idServicio, idZona) VALUES (%s, %s, %s, %s, %s, %s, %s, CURDATE(), %s, %s);"
+    values = (dni, apellido, nombre, direccion, telefono, estado, observaciones, idServicio, idZona)
     conn = mysql.connect()
     cursor = conn.cursor()
     cursor.execute(sql, values)

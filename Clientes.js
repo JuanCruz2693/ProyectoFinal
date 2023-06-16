@@ -27,7 +27,6 @@ form.addEventListener('submit', (event) => {
         telefono: document.querySelector('#telefono').value,
         estado: "A",
         observaciones: document.querySelector('#observaciones').value,
-        fechaAlta: document.querySelector('#fechaAlta').value,
         idServicio: idServicio,
         zona: zona
     };
@@ -67,8 +66,6 @@ $(document).on("click", ".btnInfo", function () {
         .then(data => {
             var cliente = data.find(c => c.idcliente === parseInt(idCliente)); // Buscar el cliente por su ID
 
-            var fechaAlta = new Date(cliente.fechaAlta).toLocaleDateString("es-ES");
-
             // Actualizar los elementos del modal con los datos del cliente
             $("#dni-i").text(cliente.dni);
             $("#nombre-i").text(cliente.nombre);
@@ -77,7 +74,7 @@ $(document).on("click", ".btnInfo", function () {
             $("#telefono-i").text(cliente.telefono);
             $("#estado-i").text(cliente.estado);
             $("#observaciones-i").text(cliente.observaciones);
-            $("#fechaAlta-i").text(fechaAlta);
+            $("#fechaAlta-i").text(cliente.fechaAlta);
             $("#servicio-i").text(cliente.servicio);
             $("#zona-i").text(cliente.zona);
 
@@ -142,22 +139,8 @@ $(document).on("click", "#btnEditar", function () {
     var direccion = $("#direccion-i").text().trim();
     var telefono = $("#telefono-i").text().trim();
     var observaciones = $("#observaciones-i").text().trim();
-    var fechaAlta = $("#fechaAlta-i").text().trim();
     var servicio = $("#servicio-i").text().trim();
     var zona = $("#zona-i").text().trim();
-
-// Dividir la cadena de fecha en día, mes y año
-var partesFecha = fechaAlta.split("/");
-var dia = partesFecha[0];
-var mes = partesFecha[1];
-var anio = partesFecha[2];
-
-// Formatear la fecha en el formato "dd/mm/yyyy"
-var fechaFormateada = dia.padStart(2, "0") + "/" + mes.padStart(2, "0") + "/" + anio;
-
-// Asignar la fecha formateada al input
-$("#fechaAlta").val(fechaFormateada);
-
 
     console.log("dni:", dni);
     console.log("nombre:", nombre);
@@ -165,7 +148,6 @@ $("#fechaAlta").val(fechaFormateada);
     console.log("direccion:", direccion);
     console.log("telefono:", telefono);
     console.log("observaciones:", observaciones);
-    console.log("fechaAlta:", fechaFormateada);
     console.log("servicio:", servicio);
     console.log("zona:", zona);
 
@@ -176,7 +158,6 @@ $("#fechaAlta").val(fechaFormateada);
     $("#domicilio").val(direccion);
     $("#telefono").val(telefono);
     $("#observaciones").val(observaciones);
-    $("#fechaAlta").val(fechaFormateada);
     $("#servicio").val(servicio);
     $("#zona").val(zona);
 
