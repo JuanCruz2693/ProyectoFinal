@@ -52,7 +52,7 @@ def clientes():
             'estado': empleado[6],
             'observaciones': empleado[7],
             'fechaAlta': empleado[8],
-            'servicio': empleado[9],
+            'servicio': empleado[10],
             'zona': empleado[10]
         }
         empleados_dict.append(empleado_dict)
@@ -80,6 +80,30 @@ def guardar():
     return "Cliente guardado exitosamente"
 
 
+@app.route("/editarCliente/<int:idCliente>", methods=["PUT"])
+def editar_cliente(idCliente):
+    data = request.get_json()
+    dni = data.get("dni")
+    apellido = data.get("apellido")
+    nombre = data.get("nombre")
+    direccion = data.get("direccion")
+    telefono = data.get("telefono")
+    observaciones = data.get("observaciones")
+    idServicio = data.get("idServicio")
+    idZona = data.get("zona")
+
+    sql = "UPDATE cliente SET dni = %s, apellido = %s, nombre = %s, direccion = %s, telefono = %s, observaciones = %s, idServicio = %s, idZona = %s WHERE idCliente = %s"
+    values = (dni, apellido, nombre, direccion, telefono, observaciones, idServicio, idZona, idCliente)
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute(sql, values)
+    conn.commit()
+
+    return "Cliente actualizado exitosamente"
+
+if __name__ == "__main__":
+    app.run()
 
 
 if __name__=='__main__':
