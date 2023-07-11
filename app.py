@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template, request, jsonify
+from flask import render_template, request, jsonify, redirect, session
 from flaskext.mysql import MySQL
 from flask_cors import CORS
 
@@ -12,6 +12,27 @@ app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = '261093'
 app.config['MYSQL_DATABASE_DB'] = 'gestion_isp'
 mysql.init_app(app)
+app.secret_key = 'mysecretkey'
+
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.json['username']
+    password = request.json['password']
+    
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    
+    cursor.execute('SELECT * FROM usuario WHERE usuario=%s AND contrasenia=%s', (username, password))
+    user = cursor.fetchone()
+    
+    conn.close()
+    
+    if user:
+        session['username'] = username
+        return jsonify({'message': 'Inicio de sesión exitoso'})
+    else:
+        return jsonify({'error': 'Credenciales inválidas'})
+
 
 @app.route('/clientes')
 def index():
@@ -102,9 +123,12 @@ def editar_cliente(idCliente):
 
     return "Cliente actualizado exitosamente"
 
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return jsonify({'message': 'Cierre de sesión exitoso'})
+
+
 if __name__ == "__main__":
-    app.run()
-
-
-if __name__=='__main__':
     app.run()
