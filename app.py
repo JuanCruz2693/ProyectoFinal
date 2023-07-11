@@ -123,12 +123,5 @@ def editar_cliente(idCliente):
 
     return "Cliente actualizado exitosamente"
 
-
-@app.route('/logout')
-def logout():
-    session.pop('username', None)
-    return jsonify({'message': 'Cierre de sesión exitoso'})
-
-
 if __name__ == "__main__":
     app.run()
