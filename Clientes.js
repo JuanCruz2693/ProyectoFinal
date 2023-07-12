@@ -162,7 +162,7 @@ $("#formClientes").submit(function (event) {
                     swal('Cliente guardado exitosamente', '', 'success').then(() => {
                         setTimeout(() => {
                             location.reload();
-                        }, 2000); // recarga la página después de 2 segundos
+                        }, 1000); // recarga la página después de 2 segundos
                     });
                     $("#modalCRUD").modal("hide");
                     // Hacer algo después de que el cliente se haya guardado correctamente
@@ -204,7 +204,7 @@ $("#formClientes").submit(function (event) {
                     swal('Cliente editado exitosamente', '', 'success').then(() => {
                         setTimeout(() => {
                             location.reload();
-                        }, 2000); // recarga la página después de 2 segundos
+                        }, 1000); // recarga la página después de 2 segundos
                     });
                     $("#modalCRUD").modal("hide");
                     //location.reload();
@@ -240,8 +240,11 @@ $("#btnBaja").click(function () {
     })
         .then(response => {
             if (response.ok) {
-                // La actualización se realizó exitosamente
-                // Realiza las acciones adicionales que desees
+                swal('Cambio de estado exitoso', '', 'success').then(() => {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                });        
             } else {
                 // Hubo un error al actualizar el estado del cliente
                 console.error('Error al actualizar el estado del cliente');

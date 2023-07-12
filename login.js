@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(function(data) {
             console.log(data);
             if ('message' in data && data.message === 'Inicio de sesión exitoso') {
-                window.location.href = 'http://127.0.0.1:5501/Gestion_ISP/Clientes.html';
+                window.location.href = 'http://127.0.0.1:5501/Gestion_ISP/home.html';
             } else if ('error' in data) {
                 console.log(data.error);
             }
