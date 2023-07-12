@@ -1,6 +1,7 @@
 from flask import Flask
-from flask import render_template, request, jsonify, redirect, session
+from flask import request, jsonify, session
 from flaskext.mysql import MySQL
+from flask_login import login_required
 from flask_cors import CORS
 
 
@@ -122,6 +123,55 @@ def editar_cliente(idCliente):
     conn.commit()
 
     return "Cliente actualizado exitosamente"
+
+
+@app.route("/actualizarEstado/<int:idCliente>", methods=["PUT"])
+def editarEstado(idCliente):
+    data = request.get_json()
+    estado = data.get("estado")
+
+    sql = "UPDATE cliente SET estado = %s WHERE idCliente = %s"
+    values = (estado, idCliente)
+
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute(sql, values)
+    conn.commit()
+
+    return "Cliente actualizado exitosamente"
+
+@app.route('/generarDeuda', methods=['POST'])
+def generar_deuda():
+    # Realizar la llamada al procedimiento almacenado
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.callproc('GenerarDeuda')
+    conn.commit()
+    conn.close()
+    return jsonify({'message': 'Deuda generada exitosamente'})
+
+
+@app.route('/clienteDeuda/<int:idCliente>', methods=['GET'])
+def obtener_deuda_cliente(idCliente):
+    sql = "SELECT c.idcliente, d.iddeuda, monto, d.mes FROM clientedeuda c INNER JOIN deuda d ON c.iddeuda = d.iddeuda WHERE c.idcliente = %s"
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute(sql, (idCliente,))
+    clientes_deuda = cursor.fetchall()
+    conn.commit()
+
+    clientes_dict = []
+    for cliente_deuda in clientes_deuda:
+        cliente_dict = {
+            'idcliente': cliente_deuda[0],
+            'iddeuda': cliente_deuda[1],
+            'monto': cliente_deuda[2],
+            'mes': cliente_deuda[3]
+        }
+        clientes_dict.append(cliente_dict)
+
+    return jsonify(clientes_dict)
+
 
 if __name__ == "__main__":
     app.run()

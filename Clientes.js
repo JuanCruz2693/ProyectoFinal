@@ -9,6 +9,7 @@ $("#btnNuevo").click(function () {
     $("#formClientes").attr("data-action", "guardar");
     $("#modalCRUD").modal("show");
 });
+
 //boton editar
 $(document).on("click", "#btnEditar", function () {
     // Obtener los valores del modal de información del cliente
@@ -35,13 +36,13 @@ $(document).on("click", "#btnEditar", function () {
     $("#btnSubmit").text("Guardar");
     $("#formClientes").attr("data-action", "editar");
     $("#modalCRUD").modal("show");
-
 });
 
 fetch('http://127.0.0.1:5000/clientes')
     .then(response => response.json())
     .then(data => {
         // Crear filas con los datos obtenidos y añadirlos a la tabla
+        //se agrgego el boton registrar el pago
         let filas = '';
         data.forEach(cliente => {
             filas += `<tr>
@@ -49,11 +50,10 @@ fetch('http://127.0.0.1:5000/clientes')
                 <td>${cliente.dni}</td>
                 <td>${cliente.apellido}</td>
                 <td>${cliente.nombre}</td>
-                <td><div class='text-center'><button class='btnMasInfo'>Info</button></div></td>
+                <td><div class='text-center'><button class='btnMasInfo'>Info</button><button class='btnRegistrarPago'>Pago</button></div></td>
                 </tr>`;
         });
         document.getElementById('tablaClientes').innerHTML = filas;
-
         $(document).ready(function () {
             tablaClientes = $('#Clientes').DataTable({
                 scrollX: true,
@@ -61,7 +61,8 @@ fetch('http://127.0.0.1:5000/clientes')
                 "columnDefs": [{
                     "targets": 4,
                     "data": null,
-                    "defaultContent": "<div class='text-center'><div class='btn-group'><button class='btn btn-primary btnInfo'><i class='fa-solid fa-eye'></i></button>"
+                    //se agrego el boton registrar el pago
+                    "defaultContent": "<div class='text-center'><div class='btn-group'><button class='btn btn-outline-info btnInfo'><i class='bx bx-plus-circle'></i></button><button class='btn btn-outline-success btnRegistrarPago'><i class='bx bx-dollar-circle'></i></button></div></div>"
                 }],
                 // lenguaje
                 "language": {
@@ -107,6 +108,16 @@ $(document).on("click", ".btnInfo", function () {
             $("#fechaAlta-i").text(cliente.fechaAlta);
             $("#servicio-i").text(cliente.servicio);
             $("#zona-i").text(cliente.zona);
+            fetch("http://127.0.0.1:5000/clienteDeuda/" + idCliente)
+                .then(response => response.json())
+                .then(deuda => {
+                    var deudaInfo = deuda.map(d => d.mes + "/$" + d.monto); // Crear un array con la información de la deuda en el formato deseado
+                    var deudaText = deudaInfo.join(", "); // Unir los elementos del array con una coma y un espacio
+
+                    // Actualizar el elemento <p> con la información de la deuda
+                    $("#deuda-i").text("Deuda: " + deudaText);
+                })
+            actualizarBotonBaja()
 
             $("#modal-info").modal("show");
         })
@@ -117,31 +128,27 @@ $(document).on("click", ".btnInfo", function () {
 let url = "";
 
 // Escuchar el evento submit del formulario
-$("#formClientes").submit(function(event) {
+$("#formClientes").submit(function (event) {
     event.preventDefault();
     var fila = $(this).closest("tr");
     var action = $(this).attr("data-action");
-    
-    if (action === "guardar") {
-    // Crear el objeto JSON
-    console.log("Submit button clicked");
-    const idServicio = parseInt(document.querySelector('#servicio').value);
-    const zona = parseInt(document.querySelector('#zona').value);
-    const cliente = {
-        dni: document.querySelector('#dni').value,
-        apellido: document.querySelector('#apellido').value,
-        nombre: document.querySelector('#nombre').value,
-        direccion: document.querySelector('#domicilio').value,
-        telefono: document.querySelector('#telefono').value,
-        estado: "A",
-        observaciones: document.querySelector('#observaciones').value,
-        idServicio: idServicio,
-        zona: zona
-    };
 
-    // Mostrar el objeto JSON en la consola
-    console.log(cliente);
-        // Lógica para la acción "Guardar"
+    if (action === "guardar") {
+        // Crear el objeto JSON
+        console.log("Submit button clicked");
+        const idServicio = parseInt(document.querySelector('#servicio').value);
+        const zona = parseInt(document.querySelector('#zona').value);
+        const cliente = {
+            dni: document.querySelector('#dni').value,
+            apellido: document.querySelector('#apellido').value,
+            nombre: document.querySelector('#nombre').value,
+            direccion: document.querySelector('#domicilio').value,
+            telefono: document.querySelector('#telefono').value,
+            estado: "A",
+            observaciones: document.querySelector('#observaciones').value,
+            idServicio: idServicio,
+            zona: zona
+        };
         url = "http://127.0.0.1:5000/guardarCliente";
         fetch(url, {
             method: 'POST',
@@ -181,12 +188,8 @@ $("#formClientes").submit(function(event) {
             idServicio: parseInt(document.querySelector('#servicio').value),
             zona: parseInt(document.querySelector('#zona').value)
         };
-        
-        console.log(cliente)
 
-
-
-        url = `http://127.0.0.1:5000/editarCliente/`+ idCliente;
+        url = `http://127.0.0.1:5000/editarCliente/` + idCliente;
         fetch(url, {
             method: 'PUT',
             headers: {
@@ -194,25 +197,104 @@ $("#formClientes").submit(function(event) {
             },
             body: JSON.stringify(cliente)
         })
-        .then(response => {
-            if (response.ok) {
-                console.log('Cliente guardado exitosamente');
-                //alert("Cliente guardado correctamente");
-                swal('Cliente editado exitosamente', '', 'success').then(() => {
-                    setTimeout(() => {
-                        location.reload();
-                    }, 2000); // recarga la página después de 2 segundos
-                });
-                $("#modalCRUD").modal("hide");
-                //location.reload();
-                // Hacer algo después de que el cliente se haya guardado correctamente
-            } else {
-                console.error('Error al guardar el cliente');
-                // Hacer algo en caso de que ocurra un error al guardar el cliente
-            }
-        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Cliente guardado exitosamente');
+                    //alert("Cliente guardado correctamente");
+                    swal('Cliente editado exitosamente', '', 'success').then(() => {
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000); // recarga la página después de 2 segundos
+                    });
+                    $("#modalCRUD").modal("hide");
+                    //location.reload();
+                    // Hacer algo después de que el cliente se haya guardado correctamente
+                } else {
+                    console.error('Error al guardar el cliente');
+                    // Hacer algo en caso de que ocurra un error al guardar el cliente
+                }
+            })
     }
 });
 
+//baja logica de cliente
+$("#btnBaja").click(function () {
+    var idCliente = $("#id-i").text();
+    var estadoCliente = $("#estado-i").text();
+    var cliente = {
+        idCliente: idCliente
+    };
 
+    if (estadoCliente === "B") {
+        cliente.estado = "A"; // Cambiar el estado a "Alta"
+    } else if (estadoCliente === "A") {
+        cliente.estado = "B"; // Cambiar el estado a "Baja"
+    }
+
+    fetch("http://127.0.0.1:5000/actualizarEstado/" + idCliente, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(cliente)
+    })
+        .then(response => {
+            if (response.ok) {
+                // La actualización se realizó exitosamente
+                // Realiza las acciones adicionales que desees
+            } else {
+                // Hubo un error al actualizar el estado del cliente
+                console.error('Error al actualizar el estado del cliente');
+            }
+        })
+        .catch(error => {
+            // Hubo un error al enviar la solicitud
+            console.error('Error al enviar la solicitud', error);
+        });
+});
+
+
+
+document.getElementById('btnGenerarDeuda').addEventListener('click', function () {
+    // Realizar la solicitud POST al endpoint /generarDeuda
+    fetch('http://127.0.0.1:5000/generarDeuda', {
+        method: 'POST'
+    })
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Error al generar la deuda');
+            }
+        })
+        .then(function (data) {
+            console.log(data.message);
+        })
+        .catch(function (error) {
+            console.error('Error:', error.message);
+        });
+});
+
+
+
+
+
+function actualizarBotonBaja() {
+    // Obtener el estado del cliente
+    var estadoCliente = document.getElementById("estado-i").textContent;
+
+    // Obtener referencia al botón de "Baja"
+    var btnBaja = document.getElementById("btnBaja");
+
+    // Verificar el estado y realizar los cambios necesarios
+    if (estadoCliente === "B") {
+        btnBaja.textContent = "Alta"; // Cambiar el texto del botón a "Alta"
+        btnBaja.classList.remove("btn-danger"); // Eliminar la clase "btn-danger"
+        btnBaja.classList.add("btn-success"); // Agregar la clase "btn-success" (color verde)
+    } else if (estadoCliente === "A") {
+        btnBaja.textContent = "Baja"; // Restaurar el texto original del botón a "Baja"
+        btnBaja.classList.remove("btn-success"); // Eliminar la clase "btn-success"
+        btnBaja.classList.add("btn-danger"); // Agregar la clase "btn-danger" (color rojo)
+    }
+}
 
